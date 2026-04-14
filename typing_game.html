@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>极简打字练习</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --text-main: #2d3436;
+            --correct: #2ecc71;
+            --incorrect: #e74c3c;
+            --current: #3498db;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 800px;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        h1 { color: var(--text-main); text-align: center; }
+
+        #quote-display {
+            font-size: 1.5rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+            word-break: break-all;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .text-input {
+            width: 100%;
+            height: 100px;
+            padding: 15px;
+            font-size: 1.2rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            resize: none;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        .text-input:focus { border-color: var(--current); }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+
+        .correct { color: var(--correct); }
+        .incorrect { color: var(--incorrect); text-decoration: underline; }
+        .current { background-color: rgba(52, 152, 219, 0.2); }
+
+        button {
+            display: block;
+            margin: 20px auto 0;
+            padding: 10px 25px;
+            background-color: var(--current);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        button:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>⌨️ 打字速度测试</h1>
+    <div class="stats">
+        <div>耗时: <span id="timer">0</span>s</div>
+        <div>WPM: <span id="wpm">0</span></div>
+        <div>准确率: <span id="accuracy">100</span>%</div>
+    </div>
+    
+    <div id="quote-display">正在加载测试文本...</div>
+    
+    <textarea id="quote-input" class="text-input" autofocus placeholder="在这里开始打字..."></textarea>
+    
+    <button id="reset-btn">更换文本 / 重置</button>
+</div>
+
+<script>
+    const displayElement = document.getElementById('quote-display');
+    const inputElement = document.getElementById('quote-input');
+    const timerElement = document.getElementById('timer');
+    const wpmElement = document.getElementById('wpm');
+    const accuracyElement = document.getElementById('accuracy');
+    const resetBtn = document.getElementById('reset-btn');
+
+    let quotes = []; // 用来存放从 JSON 加载的内容
+    let startTime;
+    let timerInterval;
+
+    // --- 核心修改：从 JSON 获取数据 ---
+    async function loadQuotes() {
+        try {
+            const response = await fetch('quotes.json'); // 读取同目录下的 json
+            const data = await response.json();
+            quotes = data.quotes;
+            renderNewQuote(); // 加载成功后显示第一条
+        } catch (error) {
+            displayElement.innerText = "无法加载 quotes.json，请检查文件是否存在或是否使用了本地服务器环境。";
+            console.error("Error loading JSON:", error);
+        }
+    }
+
+    function renderNewQuote() {
+        if (quotes.length === 0) return;
+
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+        const quote = quotes[randomIndex];
+        
+        displayElement.innerHTML = '';
+        quote.split('').forEach(char => {
+            const span = document.createElement('span');
+            span.innerText = char;
+            displayElement.appendChild(span);
+        });
+        
+        inputElement.value = null;
+        resetStats();
+    }
+
+    // --- 以下逻辑保持不变 ---
+
+    function resetStats() {
+        clearInterval(timerInterval);
+        startTime = null;
+        timerElement.innerText = 0;
+        wpmElement.innerText = 0;
+        accuracyElement.innerText = 100;
+    }
+
+    inputElement.addEventListener('input', () => {
+        const arrayQuote = displayElement.querySelectorAll('span');
+        const arrayValue = inputElement.value.split('');
+        
+        if (!startTime) {
+            startTime = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        let correctCount = 0;
+        let isComplete = (arrayValue.length === arrayQuote.length);
+
+        arrayQuote.forEach((characterSpan, index) => {
+            const character = arrayValue[index];
+            if (character == null) {
+                characterSpan.classList.remove('correct', 'incorrect');
+                isComplete = false;
+            } else if (character === characterSpan.innerText) {
+                characterSpan.classList.add('correct');
+                characterSpan.classList.remove('incorrect');
+                correctCount++;
+            } else {
+                characterSpan.classList.remove('correct');
+                characterSpan.classList.add('incorrect');
+                isComplete = false;
+            }
+        });
+
+        if (arrayValue.length > 0) {
+            accuracyElement.innerText = Math.floor((correctCount / arrayValue.length) * 100);
+        }
+
+        if (isComplete && correctCount === arrayQuote.length) {
+            setTimeout(renderNewQuote, 500); // 全部正确后半秒自动切换
+        }
+    });
+
+    function updateTimer() {
+        const time = Math.floor((new Date() - startTime) / 1000);
+        timerElement.innerText = time;
+        const wordCount = inputElement.value.length / 5;
+        if (time > 0) {
+            wpmElement.innerText = Math.round(wordCount / (time / 60));
+        }
+    }
+
+    resetBtn.addEventListener('click', renderNewQuote);
+
+    // 页面加载后启动
+    loadQuotes();
+</script>
+
+</body>
+</html>
