@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>特教辅助游戏中心 · 全部置中</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>🌟 游戏中心</h1>
+        <p>选择一个你喜欢的游戏开始探索吧！</p>
+    </header>
+
+    <!-- 使用grid容器，所有卡片自动居中，忽略html中的换行干扰 -->
+    <main class="game-container">
+        <a href="game1.html" class="game-card card-blue" onmouseover="speak('情绪翻翻乐')">
+            <div class="icon">🃏</div>
+            <h2>情绪翻翻乐</h2>
+            <p>观察表情，寻找配对</p>
+            <span class="btn">点击开始</span>
+        </a>
+
+        <a href="game2.html" class="game-card card-green" onmouseover="speak('抓住小动物')">
+            <div class="icon">🎯</div>
+            <h2>抓住小动物</h2>
+            <p>训练专注，快速点击</p>
+            <span class="btn">点击开始</span>
+        </a>
+        <!-- 原html中的<br>已被css隐藏，不会导致换行错位 -->
+        <br> 
+        <a href="game3.html" class="game-card card-orange" onmouseover="speak('词汇对对碰')">
+            <div class="icon">📦</div>
+            <h2>词汇对对碰</h2>
+            <p>拖动图片，学习新词</p>
+            <span class="btn">点击开始</span>
+        </a>
+
+        <a href="game4.html" class="game-card card-orange" onmouseover="speak('2048合成')">
+            <div class="icon"> 🧩</div>  
+            <h2>2048合成</h2>
+            <p>数字合成，考验脑力</p>
+            <span class="btn">点击开始</span>
+        </a>
+    </main>
+
+    <!-- 语音辅助功能 -->
+    <script>
+        // 语音辅助功能：当鼠标划过或点击时读出游戏名 (特教友好)
+        function speak(text) {
+            // 防止短时间内多次触发导致声音混乱
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.lang = 'zh-CN';
+            msg.rate = 0.8; // 语速稍慢一点，方便听清
+            msg.volume = 1;
+            // 再次确保停止之前的播放
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(msg);
+        }
+    </script>
+</body>
+</html>

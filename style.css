@@ -1,0 +1,186 @@
+/* ===== 全局重置 & 完全居中 ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* 柔和背景，保护视力 */
+    background-color: #f0f9ff;      /* 柔光浅蓝 */
+    font-family: 'Microsoft YaHei', '幼圆', 'Segoe UI', sans-serif;
+    color: #1e2f3f;
+    /* 弹性布局，所有直接子元素水平居中 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;        /* 水平居中 */
+    min-height: 100vh;
+    padding: 20px 15px;
+}
+
+/* 页眉区完全居中 */
+header {
+    margin: 30px 0 30px 0;
+    text-align: center;          /* 文字居中 */
+    width: 100%;
+    max-width: 900px;
+}
+
+header h1 {
+    font-size: 3rem;              /* 约48px */
+    color: #2c3e50;
+    text-shadow: 2px 2px 0 #d4e9ff;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    word-break: break-word;
+}
+
+header p {
+    font-size: 1.4rem;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(4px);
+    display: inline-block;        /* 让背景紧贴文字 */
+    padding: 0.6rem 2rem;
+    border-radius: 60px;
+    box-shadow: 0 4px 8px rgba(0, 40, 60, 0.1);
+    color: #174b6b;
+    margin-top: 8px;
+}
+
+/* ===== 游戏卡片网格 — 完全居中 ===== */
+.game-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px 25px;               /* 行间距与列间距 */
+    width: 100%;
+    max-width: 1150px;             /* 略宽，大屏也好看 */
+    margin: 0 auto;                 /* 容器本身水平居中 */
+    padding: 20px 15px;
+    justify-items: center;          /* 让每个单元格内的卡片水平居中 (关键) */
+    align-items: stretch;           /* 保证卡片高度自由拉伸 */
+}
+
+/* 卡片样式 — 内部也是flex纵向居中 */
+.game-card {
+    text-decoration: none;
+    color: #1e2f3f;
+    background: white;
+    border-radius: 40px;
+    padding: 35px 20px 30px 20px;
+    width: 100%;                    /* 占据网格单元格全部宽度 */
+    max-width: 340px;                /* 美观限制，但依然居中 */
+    text-align: center;              /* 内部文字居中 */
+    box-shadow: 0 12px 24px rgba(0, 30, 50, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.3s, border-color 0.2s;
+    border: 4px solid transparent;   /* 预留边框位，防止悬停抖动 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;              /* 水平居中所有内部块 */
+    justify-content: center;           /* 垂直方向也居中（内容少时） */
+}
+
+.game-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 30px rgba(27, 60, 87, 0.15);
+}
+
+/* 不同卡片悬停边框颜色 — 与按钮色呼应 */
+.card-blue:hover {
+    border-color: #3498db;
+}
+.card-green:hover {
+    border-color: #2ecc71;
+}
+.card-orange:hover {
+    border-color: #e67e22;
+}
+
+/* 图标 */
+.game-card .icon {
+    font-size: 5rem;               /* 80px */
+    line-height: 1.2;
+    margin-bottom: 15px;
+    filter: drop-shadow(2px 6px 6px rgba(0,0,0,0.1));
+}
+
+/* 游戏标题 */
+.game-card h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 10px 0 8px 0;
+    color: #1e3c4f;
+}
+
+/* 描述文字 */
+.game-card p {
+    font-size: 1.1rem;
+    color: #3d5a73;
+    margin-bottom: 25px;
+    padding: 0 6px;
+    background: rgba(255, 247, 220, 0.3);
+    border-radius: 30px;
+}
+
+/* 按钮 — 风格鲜明，且与卡片边框色系一致 */
+.btn {
+    display: inline-block;
+    padding: 12px 32px;
+    background: #2b4b6e;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    border-radius: 60px;
+    text-decoration: none;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+    transition: background 0.2s, transform 0.1s;
+    border: none;
+    cursor: pointer;
+    margin-top: 5px;
+    letter-spacing: 1px;
+}
+
+.btn:hover {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+}
+
+/* 分别设定按钮颜色 (与卡片悬停色对应) */
+.card-blue .btn {
+    background: #3498db;
+}
+.card-green .btn {
+    background: #2ecc71;
+}
+.card-orange .btn {
+    background: #e67e22;
+}
+
+/* 确保链接访问后的颜色不变 */
+.game-card:visited,
+.game-card:link {
+    color: inherit;
+}
+
+/* 小调整：适配移动端，标题缩小一点 */
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 2.4rem;
+    }
+    header p {
+        font-size: 1.2rem;
+    }
+    .game-card {
+        padding: 25px 15px;
+    }
+    .game-card .icon {
+        font-size: 4rem;
+    }
+    .game-card h2 {
+        font-size: 1.8rem;
+    }
+}
+
+/* 让第二行单独的 <br> 不破坏网格 (原html中在第二个卡片后有个<br>，用css屏蔽) */
+.game-container br {
+    display: none;   /* 避免多余的换行影响grid布局 */
+}

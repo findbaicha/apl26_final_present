@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>词汇对对碰</title>
+    <style>
+        body { background: #fff3e0; display: flex; flex-direction: column; align-items: center; font-family: sans-serif; }
+        .container { display: flex; gap: 50px; margin-top: 50px; }
+        .item { font-size: 80px; cursor: grab; padding: 10px; border: 2px dashed #ccc; }
+        .dropzone { width: 150px; height: 150px; border: 5px solid #e67e22; border-radius: 20px; 
+                    display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; }
+        .dropzone.hover { background: #ffe0b2; }
+    </style>
+</head>
+<body>
+    <h1>📦 单词搬运工</h1>
+    <p>把图片拖到正确的名字里</p>
+    
+    <div class="container">
+        <div class="item" id="apple" draggable="true" ondragstart="drag(event)">🍎</div>
+        <div class="item" id="dog" draggable="true" ondragstart="drag(event)">🐶</div>
+    </div>
+
+    <div class="container">
+        <div class="dropzone" id="zone-apple" ondrop="drop(event)" ondragover="allowDrop(event)">苹果</div>
+        <div class="dropzone" id="zone-dog" ondrop="drop(event)" ondragover="allowDrop(event)">小狗</div>
+    </div>
+
+    <button style="margin-top: 50px;" onclick="location.href='index.html'">返回首页</button>
+
+    <script>
+        function allowDrop(ev) { ev.preventDefault(); ev.target.classList.add('hover'); }
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+
+        function drop(ev) {
+            ev.preventDefault();
+            ev.target.classList.remove('hover');
+            const data = ev.dataTransfer.getData("text");
+            const targetId = ev.target.id.replace('zone-', '');
+            
+            if (data === targetId) {
+                ev.target.appendChild(document.getElementById(data));
+                ev.target.style.background = "#c8e6c9";
+                const msg = new SpeechSynthesisUtterance(targetId === 'apple' ? "苹果" : "小狗");
+                window.speechSynthesis.speak(msg);
+            } else {
+                alert("再试一次吧！");
+            }
+        }
+    </script>
+</body>
+</html>

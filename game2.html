@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>抓住小动物</title>
+    <style>
+        body { background: #e8f5e9; overflow: hidden; text-align: center; font-family: sans-serif; }
+        #game-area { width: 100vw; height: 80vh; position: relative; }
+        .target { position: absolute; font-size: 80px; cursor: pointer; user-select: none; transition: transform 0.2s; }
+        .target:active { transform: scale(1.5); }
+        .score { font-size: 24px; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <h1>🎯 抓住那只小猴子！</h1>
+    <div class="score">得分: <span id="score">0</span></div>
+    <div id="game-area"></div>
+    <button onclick="location.href='index.html'">返回首页</button>
+
+    <script>
+        let score = 0;
+        const area = document.getElementById('game-area');
+        const scoreDisplay = document.getElementById('score');
+
+        function createTarget() {
+            const target = document.createElement('div');
+            target.className = 'target';
+            target.innerHTML = '🐒';
+            target.style.left = Math.random() * 80 + 'vw';
+            target.style.top = Math.random() * 70 + 'vh';
+            
+            target.onclick = (e) => {
+                score++;
+                scoreDisplay.innerText = score;
+                area.removeChild(target);
+                createTarget(); // 点中后立即在别处生成
+                playHappySound();
+            };
+            area.appendChild(target);
+            
+            // 自动漂移逻辑
+            let posX = parseFloat(target.style.left);
+            setInterval(() => {
+                posX += 0.1;
+                target.style.left = (posX % 90) + 'vw';
+            }, 50);
+        }
+
+        function playHappySound() {
+            const synth = window.speechSynthesis;
+            const utter = new SpeechSynthesisUtterance("真棒！");
+            utter.rate = 1.5;
+            synth.speak(utter);
+        }
+
+        createTarget();
+    </script>
+</body>
+</html>
